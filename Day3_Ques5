@@ -1,0 +1,18 @@
+arr = [10, 20, 30, 40, 50]
+key = 30
+
+count = 0
+found = -1
+
+for i in range(len(arr)):
+    count += 1
+    if arr[i] == key:
+        found = i
+        break
+
+if found != -1:
+    print("Element found at index:", found)
+else:
+    print("Element not found")
+
+print("Total comparisons:", count)
