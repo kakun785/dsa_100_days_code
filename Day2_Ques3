@@ -1,0 +1,10 @@
+arr = [10, 20, 30, 40, 50]
+
+pos = 2  # index to delete
+
+for i in range(pos, len(arr)-1):
+    arr[i] = arr[i+1]
+
+arr.pop()  # remove last duplicate element
+
+print("Updated Array:", arr)
