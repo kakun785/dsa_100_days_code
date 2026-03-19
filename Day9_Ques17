@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <string.h>
+
+void mirrorCode(char str[]) {
+    int i = 0;
+    int j = strlen(str) - 1;
+    char temp;
+
+    while (i < j) {
+        temp = str[i];
+        str[i] = str[j];
+        str[j] = temp;
+
+        i++;
+        j--;
+    }
+}
+
+int main() {
+    char str[100];
+
+    printf("Enter code name: ");
+    scanf("%s", str);
+
+    mirrorCode(str);
+
+    printf("Mirrored code name: %s", str);
+
+    return 0;
+}
