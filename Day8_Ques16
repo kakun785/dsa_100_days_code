@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+int isPowerOfTwo(int n) {
+    if (n <= 0)
+        return 0;
+
+    return (n & (n - 1)) == 0;
+}
+
+int main() {
+    int n = 16;
+
+    if (isPowerOfTwo(n))
+        printf("True");
+    else
+        printf("False");
+
+    return 0;
+}
