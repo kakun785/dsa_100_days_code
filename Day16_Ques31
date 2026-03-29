@@ -1,0 +1,9 @@
+from collections import Counter
+
+n = int(input())
+arr = list(map(int, input().split()))
+
+freq = Counter(arr)
+
+for key in freq:
+    print(f"{key}:{freq[key]}", end=" ")
