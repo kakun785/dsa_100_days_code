@@ -1,0 +1,25 @@
+# Input matrix size
+m, n = map(int, input().split())
+
+# Input matrix
+matrix = []
+for i in range(m):
+    row = list(map(int, input().split()))
+    matrix.append(row)
+
+# Check Toeplitz condition
+is_toeplitz = True
+
+for i in range(1, m):
+    for j in range(1, n):
+        if matrix[i][j] != matrix[i-1][j-1]:
+            is_toeplitz = False
+            break
+    if not is_toeplitz:
+        break
+
+# Output result
+if is_toeplitz:
+    print("True")
+else:
+    print("False")
