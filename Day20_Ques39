@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    int arr[n];
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    int prefix_sum = 0;
+    int count = 0;
+
+    // Using simple array as hashmap (for range handling)
+    int freq[20001] = {0};  
+    int offset = 10000;     // to handle negative sums
+
+    freq[offset] = 1; // prefix sum = 0 initially
+
+    for(int i = 0; i < n; i++) {
+        prefix_sum += arr[i];
+
+        // If this prefix_sum seen before
+        if(freq[prefix_sum + offset] > 0) {
+            count += freq[prefix_sum + offset];
+        }
+
+        // Increase frequency
+        freq[prefix_sum + offset]++;
+    }
+
+    printf("%d", count);
+
+    return 0;
+}
