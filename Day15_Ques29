@@ -1,0 +1,14 @@
+m, n = map(int, input().split())
+
+matrix = []
+for i in range(m):
+    row = list(map(int, input().split()))
+    matrix.append(row)
+
+# Sum of primary diagonal
+diagonal_sum = 0
+
+for i in range(min(m, n)):
+    diagonal_sum += matrix[i][i]
+
+print(diagonal_sum)
