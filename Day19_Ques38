@@ -1,0 +1,65 @@
+#include <stdio.h>
+
+// Function for maximum subarray sum (Kadane)
+int kadaneMax(int arr[], int n) {
+    int curr = arr[0], maxSum = arr[0];
+
+    for(int i = 1; i < n; i++) {
+        if(curr + arr[i] > arr[i])
+            curr = curr + arr[i];
+        else
+            curr = arr[i];
+
+        if(curr > maxSum)
+            maxSum = curr;
+    }
+    return maxSum;
+}
+
+// Function for minimum subarray sum
+int kadaneMin(int arr[], int n) {
+    int curr = arr[0], minSum = arr[0];
+
+    for(int i = 1; i < n; i++) {
+        if(curr + arr[i] < arr[i])
+            curr = curr + arr[i];
+        else
+            curr = arr[i];
+
+        if(curr < minSum)
+            minSum = curr;
+    }
+    return minSum;
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    int arr[n];
+    int total = 0;
+
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+        total += arr[i];
+    }
+
+    int maxSum = kadaneMax(arr, n);
+    int minSum = kadaneMin(arr, n);
+
+    // Edge case: all elements negative
+    if(maxSum < 0) {
+        printf("%d", maxSum);
+        return 0;
+    }
+
+    int circularSum = total - minSum;
+
+    // Final answer
+    if(maxSum > circularSum)
+        printf("%d", maxSum);
+    else
+        printf("%d", circularSum);
+
+    return 0;
+}
