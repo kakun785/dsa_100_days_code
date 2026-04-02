@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to detect cycle
+int hasCycle(struct Node* head) {
+    struct Node *slow = head, *fast = head;
+
+    while (fast != NULL && fast->next != NULL) {
+        slow = slow->next;           // 1 step
+        fast = fast->next->next;     // 2 steps
+
+        if (slow == fast) {
+            return 1; // Cycle found
+        }
+    }
+    return 0; // No cycle
+}
+
+int main() {
+    // Example creation (manual for testing)
+    struct Node* head = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* second = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* third = (struct Node*)malloc(sizeof(struct Node));
+
+    head->data = 1;
+    second->data = 2;
+    third->data = 3;
+
+    head->next = second;
+    second->next = third;
+
+    // Create cycle (third -> second)
+    third->next = second;
+
+    if (hasCycle(head))
+        printf("true");
+    else
+        printf("false");
+
+    return 0;
+}
