@@ -1,0 +1,171 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure
+struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+};
+
+struct Node* front = NULL;
+struct Node* rear = NULL;
+
+// Check if empty
+int isEmpty() {
+    return front == NULL;
+}
+
+// Push front
+void push_front(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->prev = NULL;
+    newNode->next = front;
+
+    if (isEmpty()) {
+        front = rear = newNode;
+    } else {
+        front->prev = newNode;
+        front = newNode;
+    }
+}
+
+// Push back
+void push_back(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->next = NULL;
+    newNode->prev = rear;
+
+    if (isEmpty()) {
+        front = rear = newNode;
+    } else {
+        rear->next = newNode;
+        rear = newNode;
+    }
+}
+
+// Pop front
+void pop_front() {
+    if (isEmpty()) {
+        printf("-1\n");
+        return;
+    }
+
+    struct Node* temp = front;
+    printf("%d\n", temp->data);
+
+    if (front == rear) {
+        front = rear = NULL;
+    } else {
+        front = front->next;
+        front->prev = NULL;
+    }
+
+    free(temp);
+}
+
+// Pop back
+void pop_back() {
+    if (isEmpty()) {
+        printf("-1\n");
+        return;
+    }
+
+    struct Node* temp = rear;
+    printf("%d\n", temp->data);
+
+    if (front == rear) {
+        front = rear = NULL;
+    } else {
+        rear = rear->prev;
+        rear->next = NULL;
+    }
+
+    free(temp);
+}
+
+// Get front
+int getFront() {
+    if (isEmpty()) return -1;
+    return front->data;
+}
+
+// Get rear
+int getRear() {
+    if (isEmpty()) return -1;
+    return rear->data;
+}
+
+// Size
+int size() {
+    int count = 0;
+    struct Node* temp = front;
+    while (temp) {
+        count++;
+        temp = temp->next;
+    }
+    return count;
+}
+
+// Display deque
+void display() {
+    struct Node* temp = front;
+    while (temp) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+// Clear deque
+void clear() {
+    while (!isEmpty()) {
+        pop_front();
+    }
+}
+
+// Reverse deque
+void reverse() {
+    struct Node *curr = front, *temp = NULL;
+
+    while (curr != NULL) {
+        temp = curr->prev;
+        curr->prev = curr->next;
+        curr->next = temp;
+        curr = curr->prev;
+    }
+
+    if (temp != NULL) {
+        front = temp->prev;
+    }
+}
+
+int main() {
+    push_back(10);
+    push_back(20);
+    push_front(5);
+
+    display(); // 5 10 20
+
+    pop_front(); // 5
+    pop_back();  // 20
+
+    printf("Front: %d\n", getFront()); // 10
+    printf("Rear: %d\n", getRear());   // 10
+
+    push_back(30);
+    push_back(40);
+
+    display(); // 10 30 40
+
+    reverse();
+    display(); // 40 30 10
+
+    printf("Size: %d\n", size());
+
+    clear();
+
+    return 0;
+}
