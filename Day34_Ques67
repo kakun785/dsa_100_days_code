@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+// Node for stack
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Push
+void push(struct Node** top, int val) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = val;
+    newNode->next = *top;
+    *top = newNode;
+}
+
+// Pop
+int pop(struct Node** top) {
+    if (*top == NULL) return 0;
+
+    struct Node* temp = *top;
+    int val = temp->data;
+    *top = temp->next;
+    free(temp);
+    return val;
+}
+
+// Evaluate postfix
+int evaluate(char* exp) {
+    struct Node* stack = NULL;
+    char* token = strtok(exp, " ");
+
+    while (token != NULL) {
+        // If number
+        if (isdigit(token[0]) || 
+           (token[0] == '-' && isdigit(token[1]))) {
+            push(&stack, atoi(token));
+        }
+        else {
+            int b = pop(&stack);
+            int a = pop(&stack);
+            int res;
+
+            switch (token[0]) {
+                case '+': res = a + b; break;
+                case '-': res = a - b; break;
+                case '*': res = a * b; break;
+                case '/': res = a / b; break;
+            }
+            push(&stack, res);
+        }
+
+        token = strtok(NULL, " ");
+    }
+
+    return pop(&stack);
+}
+
+int main() {
+    char exp[100];
+
+    // Read full line input
+    fgets(exp, sizeof(exp), stdin);
+
+    // Remove newline
+    exp[strcspn(exp, "\n")] = '\0';
+
+    int result = evaluate(exp);
+
+    printf("%d", result);
+
+    return 0;
+}
