@@ -1,0 +1,56 @@
+#include <iostream>
+#include <stack>
+using namespace std;
+
+class MyQueue {
+private:
+    stack<int> inStack, outStack;
+
+    // Move elements when needed
+    void transfer() {
+        while (!inStack.empty()) {
+            outStack.push(inStack.top());
+            inStack.pop();
+        }
+    }
+
+public:
+    MyQueue() {}
+
+    void push(int x) {
+        inStack.push(x);
+    }
+
+    int pop() {
+        if (outStack.empty()) {
+            transfer();
+        }
+        int val = outStack.top();
+        outStack.pop();
+        return val;
+    }
+
+    int peek() {
+        if (outStack.empty()) {
+            transfer();
+        }
+        return outStack.top();
+    }
+
+    bool empty() {
+        return inStack.empty() && outStack.empty();
+    }
+};
+
+int main() {
+    MyQueue q;
+
+    q.push(1);
+    q.push(2);
+
+    cout << q.peek() << endl;  // 1
+    cout << q.pop() << endl;   // 1
+    cout << q.empty() << endl; // 0 (false)
+
+    return 0;
+}
