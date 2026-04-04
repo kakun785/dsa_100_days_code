@@ -1,0 +1,70 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <queue>
+#include <algorithm>   // for reverse
+
+using namespace std;
+
+vector<int> topKFrequent(vector<int>& nums, int k) {
+    unordered_map<int, int> freq;
+
+    // Step 1: Count frequency
+    for (int num : nums) {
+        freq[num]++;
+    }
+
+    // Step 2: Min Heap (frequency, element)
+    priority_queue<
+        pair<int, int>,
+        vector<pair<int, int>>,
+        greater<pair<int, int>>
+    > minHeap;
+
+    // Step 3: Keep only k most frequent elements
+    for (auto it : freq) {
+        minHeap.push({it.second, it.first});
+
+        if (minHeap.size() > k) {
+            minHeap.pop();
+        }
+    }
+
+    // Step 4: Extract result
+    vector<int> result;
+    while (!minHeap.empty()) {
+        result.push_back(minHeap.top().second);
+        minHeap.pop();
+    }
+
+    // Optional: reverse for better order
+    reverse(result.begin(), result.end());
+
+    return result;
+}
+
+int main() {
+    int n, k;
+
+    // Input size
+    cin >> n;
+
+    vector<int> nums(n);
+
+    // Input array
+    for (int i = 0; i < n; i++) {
+        cin >> nums[i];
+    }
+
+    // Input k
+    cin >> k;
+
+    vector<int> res = topKFrequent(nums, k);
+
+    // Output
+    for (int x : res) {
+        cout << x << " ";
+    }
+
+    return 0;
+}
