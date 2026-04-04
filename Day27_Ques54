@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Create node
+struct Node* newNode(int data) {
+    struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
+    temp->data = data;
+    temp->next = NULL;
+    return temp;
+}
+
+// Function to remove cycle
+bool removeCycle(struct Node* head) {
+    if (head == NULL) return false;
+
+    struct Node *slow = head, *fast = head;
+
+    // Step 1: Detect cycle
+    while (fast != NULL && fast->next != NULL) {
+        slow = slow->next;
+        fast = fast->next->next;
+
+        if (slow == fast) break;
+    }
+
+    // No cycle
+    if (fast == NULL || fast->next == NULL) return false;
+
+    // Step 2: Find start of cycle
+    slow = head;
+    struct Node* prev = NULL;
+
+    while (slow != fast) {
+        prev = fast;
+        slow = slow->next;
+        fast = fast->next;
+    }
+
+    // Step 3: Remove cycle
+    prev->next = NULL;
+
+    return true;
+}
+
+// Utility to print list
+void printList(struct Node* head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+}
+
+int main() {
+    // Example: 1 -> 3 -> 4 -> back to node 3
+    struct Node* head = newNode(1);
+    head->next = newNode(3);
+    head->next->next = newNode(4);
+
+    // Creating cycle manually
+    head->next->next->next = head->next;
+
+    if (removeCycle(head))
+        printf("true\n");
+    else
+        printf("false\n");
+
+    printList(head);
+
+    return 0;
+}
