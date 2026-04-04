@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX 100
+
+typedef struct {
+    int arr[MAX];
+    int front;
+    int rear;
+    int size;
+    int capacity;
+} MyCircularDeque;
+
+// Initialize deque
+void initDeque(MyCircularDeque* dq, int k) {
+    dq->front = 0;
+    dq->rear = -1;
+    dq->size = 0;
+    dq->capacity = k;
+}
+
+// Check empty
+bool isEmpty(MyCircularDeque* dq) {
+    return dq->size == 0;
+}
+
+// Check full
+bool isFull(MyCircularDeque* dq) {
+    return dq->size == dq->capacity;
+}
+
+// Insert at front
+bool insertFront(MyCircularDeque* dq, int value) {
+    if (isFull(dq)) return false;
+
+    dq->front = (dq->front - 1 + dq->capacity) % dq->capacity;
+    dq->arr[dq->front] = value;
+    dq->size++;
+
+    if (dq->size == 1)
+        dq->rear = dq->front;
+
+    return true;
+}
+
+// Insert at rear
+bool insertLast(MyCircularDeque* dq, int value) {
+    if (isFull(dq)) return false;
+
+    dq->rear = (dq->rear + 1) % dq->capacity;
+    dq->arr[dq->rear] = value;
+    dq->size++;
+
+    return true;
+}
+
+// Delete from front
+bool deleteFront(MyCircularDeque* dq) {
+    if (isEmpty(dq)) return false;
+
+    dq->front = (dq->front + 1) % dq->capacity;
+    dq->size--;
+
+    return true;
+}
+
+// Delete from rear
+bool deleteLast(MyCircularDeque* dq) {
+    if (isEmpty(dq)) return false;
+
+    dq->rear = (dq->rear - 1 + dq->capacity) % dq->capacity;
+    dq->size--;
+
+    return true;
+}
+
+// Get front
+int getFront(MyCircularDeque* dq) {
+    if (isEmpty(dq)) return -1;
+    return dq->arr[dq->front];
+}
+
+// Get rear
+int getRear(MyCircularDeque* dq) {
+    if (isEmpty(dq)) return -1;
+    return dq->arr[dq->rear];
+}
