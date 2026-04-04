@@ -1,0 +1,78 @@
+#include <iostream>
+#include <stack>
+using namespace std;
+
+class Node {
+public:
+    int val;
+    Node* next;
+    Node(int x) {
+        val = x;
+        next = nullptr;
+    }
+};
+
+Node* addTwoNumbers(Node* l1, Node* l2) {
+    stack<int> s1, s2;
+
+    // Push values into stacks
+    while (l1) {
+        s1.push(l1->val);
+        l1 = l1->next;
+    }
+    while (l2) {
+        s2.push(l2->val);
+        l2 = l2->next;
+    }
+
+    int carry = 0;
+    Node* result = nullptr;
+
+    // Process stacks
+    while (!s1.empty() || !s2.empty() || carry) {
+        int sum = carry;
+
+        if (!s1.empty()) {
+            sum += s1.top();
+            s1.pop();
+        }
+        if (!s2.empty()) {
+            sum += s2.top();
+            s2.pop();
+        }
+
+        Node* newNode = new Node(sum % 10);
+        carry = sum / 10;
+
+        // Insert at front
+        newNode->next = result;
+        result = newNode;
+    }
+
+    return result;
+}
+
+// Print list
+void printList(Node* head) {
+    while (head) {
+        cout << head->val << " ";
+        head = head->next;
+    }
+}
+
+int main() {
+    Node* l1 = new Node(7);
+    l1->next = new Node(2);
+    l1->next->next = new Node(4);
+    l1->next->next->next = new Node(3);
+
+    Node* l2 = new Node(5);
+    l2->next = new Node(6);
+    l2->next->next = new Node(4);
+
+    Node* result = addTwoNumbers(l1, l2);
+
+    printList(result);
+
+    return 0;
+}
