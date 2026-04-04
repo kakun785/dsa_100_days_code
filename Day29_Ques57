@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Create node
+struct Node* newNode(int data) {
+    struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
+    temp->data = data;
+    temp->next = NULL;
+    return temp;
+}
+
+// Insert at end
+struct Node* insertEnd(struct Node* head, int data) {
+    struct Node* newNodePtr = newNode(data);
+
+    if (head == NULL) return newNodePtr;
+
+    struct Node* temp = head;
+    while (temp->next != NULL)
+        temp = temp->next;
+
+    temp->next = newNodePtr;
+    return head;
+}
+
+// Rotate list
+struct Node* rotateRight(struct Node* head, int k) {
+    if (head == NULL || head->next == NULL || k == 0)
+        return head;
+
+    // Step 1: Find length
+    int n = 1;
+    struct Node* temp = head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+        n++;
+    }
+
+    // Step 2: Make circular
+    temp->next = head;
+
+    // Step 3: Reduce k
+    k = k % n;
+
+    // Step 4: Find new tail
+    int steps = n - k;
+    struct Node* newTail = head;
+
+    for (int i = 1; i < steps; i++) {
+        newTail = newTail->next;
+    }
+
+    // Step 5: Set new head
+    struct Node* newHead = newTail->next;
+
+    // Step 6: Break link
+    newTail->next = NULL;
+
+    return newHead;
+}
+
+// Display list
+void display(struct Node* head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+}
+
+int main() {
+    int n, k, x;
+    struct Node* head = NULL;
+
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &x);
+        head = insertEnd(head, x);
+    }
+
+    scanf("%d", &k);
+
+    head = rotateRight(head, k);
+
+    display(head);
+
+    return 0;
+}
