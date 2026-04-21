@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Tree node
+struct TreeNode {
+    int val;
+    struct TreeNode* left;
+    struct TreeNode* right;
+};
+
+// Inorder traversal
+void inorder(struct TreeNode* root) {
+    if (root == NULL) return;
+
+    inorder(root->left);
+    printf("%d ", root->val);
+    inorder(root->right);
+}
