@@ -1,0 +1,161 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX 105
+
+// Adjacency list node
+struct Node {
+    int v, w;
+    struct Node* next;
+};
+
+struct Node* adj[MAX];
+
+// Create node
+struct Node* createNode(int v, int w) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->v = v;
+    node->w = w;
+    node->next = NULL;
+    return node;
+}
+
+// Add directed edge
+void addEdge(int u, int v, int w) {
+    struct Node* node = createNode(v, w);
+    node->next = adj[u];
+    adj[u] = node;
+}
+
+// Min Heap
+struct Heap {
+    int size;
+    int node[MAX];
+    int dist[MAX];
+};
+
+// Swap
+void swap(struct Heap* h, int i, int j) {
+    int t1 = h->node[i];
+    int t2 = h->dist[i];
+
+    h->node[i] = h->node[j];
+    h->dist[i] = h->dist[j];
+
+    h->node[j] = t1;
+    h->dist[j] = t2;
+}
+
+// Heapify up
+void heapifyUp(struct Heap* h, int i) {
+    while (i > 0 && h->dist[(i - 1) / 2] > h->dist[i]) {
+        swap(h, i, (i - 1) / 2);
+        i = (i - 1) / 2;
+    }
+}
+
+// Heapify down
+void heapifyDown(struct Heap* h, int i) {
+    int smallest = i;
+    int l = 2*i + 1, r = 2*i + 2;
+
+    if (l < h->size && h->dist[l] < h->dist[smallest])
+        smallest = l;
+
+    if (r < h->size && h->dist[r] < h->dist[smallest])
+        smallest = r;
+
+    if (smallest != i) {
+        swap(h, i, smallest);
+        heapifyDown(h, smallest);
+    }
+}
+
+// Push
+void push(struct Heap* h, int v, int d) {
+    int i = h->size++;
+    h->node[i] = v;
+    h->dist[i] = d;
+    heapifyUp(h, i);
+}
+
+// Pop min
+int pop(struct Heap* h, int* d) {
+    int v = h->node[0];
+    *d = h->dist[0];
+
+    h->node[0] = h->node[h->size - 1];
+    h->dist[0] = h->dist[h->size - 1];
+    h->size--;
+
+    heapifyDown(h, 0);
+    return v;
+}
+
+// Main function
+int networkDelayTime(int times[][3], int timesSize, int n, int k) {
+    // Initialize graph
+    for (int i = 1; i <= n; i++)
+        adj[i] = NULL;
+
+    // Build graph
+    for (int i = 0; i < timesSize; i++) {
+        int u = times[i][0];
+        int v = times[i][1];
+        int w = times[i][2];
+        addEdge(u, v, w);
+    }
+
+    // Distance array
+    int dist[MAX];
+    for (int i = 1; i <= n; i++)
+        dist[i] = INT_MAX;
+
+    dist[k] = 0;
+
+    // Heap
+    struct Heap h;
+    h.size = 0;
+    push(&h, k, 0);
+
+    while (h.size > 0) {
+        int d, u = pop(&h, &d);
+
+        if (d > dist[u]) continue;
+
+        struct Node* temp = adj[u];
+        while (temp) {
+            int v = temp->v;
+            int w = temp->w;
+
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                push(&h, v, dist[v]);
+            }
+            temp = temp->next;
+        }
+    }
+
+    // Find max distance
+    int maxTime = 0;
+    for (int i = 1; i <= n; i++) {
+        if (dist[i] == INT_MAX)
+            return -1;
+        if (dist[i] > maxTime)
+            maxTime = dist[i];
+    }
+
+    return maxTime;
+}
+
+// Driver
+int main() {
+    int times[][3] = {{2,1,1},{2,3,1},{3,4,1}};
+    int n = 4, k = 2;
+
+    int result = networkDelayTime(times, 3, n, k);
+    printf("Output: %d\n", result);
+
+    return 0;
+}
