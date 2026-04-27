@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 1000
+
+// Tree Node
+struct TreeNode {
+    int val;
+    struct TreeNode *left, *right;
+};
+
+// Create node
+struct TreeNode* newNode(int val) {
+    struct TreeNode* node = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    node->val = val;
+    node->left = node->right = NULL;
+    return node;
+}
+
+// Build tree from level order (-1 = NULL)
+struct TreeNode* buildTree(int arr[], int n) {
+    if (n == 0 || arr[0] == -1)
+        return NULL;
+
+    struct TreeNode* root = newNode(arr[0]);
+    struct TreeNode* queue[MAX];
+    int front = 0, rear = 0;
+
+    queue[rear++] = root;
+    int i = 1;
+
+    while (i < n) {
+        struct TreeNode* curr = queue[front++];
+
+        if (arr[i] != -1) {
+            curr->left = newNode(arr[i]);
+            queue[rear++] = curr->left;
+        }
+        i++;
+
+        if (i < n && arr[i] != -1) {
+            curr->right = newNode(arr[i]);
+            queue[rear++] = curr->right;
+        }
+        i++;
+    }
+    return root;
+}
+
+int cameras = 0;
+
+// DFS function
+int dfs(struct TreeNode* root) {
+    if (root == NULL)
+        return 2; // covered
+
+    int left = dfs(root->left);
+    int right = dfs(root->right);
+
+    // If any child is not covered → place camera
+    if (left == 0 || right == 0) {
+        cameras++;
+        return 1; // has camera
+    }
+
+    // If any child has camera → covered
+    if (left == 1 || right == 1)
+        return 2;
+
+    // Otherwise not covered
+    return 0;
+}
+
+// Main function
+int minCameraCover(struct TreeNode* root) {
+    if (dfs(root) == 0)
+        cameras++;
+
+    return cameras;
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    int arr[n];
+    for (int i = 0; i < n; i++)
+        scanf("%d", &arr[i]);
+
+    struct TreeNode* root = buildTree(arr, n);
+
+    printf("%d\n", minCameraCover(root));
+
+    return 0;
+}
