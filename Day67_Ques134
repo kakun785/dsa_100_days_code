@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+// Node for adjacency list
+struct Node {
+    int vertex;
+    struct Node* next;
+};
+
+struct Node* adj[MAX];
+int indegree[MAX];
+
+// Queue
+int queue[MAX];
+int front = 0, rear = 0;
+
+// Enqueue
+void enqueue(int x) {
+    queue[rear++] = x;
+}
+
+// Dequeue
+int dequeue() {
+    return queue[front++];
+}
+
+// Check empty
+int isEmpty() {
+    return front == rear;
+}
+
+// Create node
+struct Node* createNode(int v) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->vertex = v;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Add directed edge
+void addEdge(int u, int v) {
+    struct Node* newNode = createNode(v);
+    newNode->next = adj[u];
+    adj[u] = newNode;
+}
+
+int main() {
+    int numCourses, m;
+    scanf("%d %d", &numCourses, &m);
+
+    // Initialize
+    for (int i = 0; i < numCourses; i++) {
+        adj[i] = NULL;
+        indegree[i] = 0;
+    }
+
+    int a, b;
+
+    // Input prerequisites
+    for (int i = 0; i < m; i++) {
+        scanf("%d %d", &a, &b);
+        addEdge(b, a);     // b → a
+        indegree[a]++;
+    }
+
+    // Add nodes with indegree 0
+    for (int i = 0; i < numCourses; i++) {
+        if (indegree[i] == 0) {
+            enqueue(i);
+        }
+    }
+
+    int result[MAX];
+    int count = 0;
+
+    // BFS (Kahn’s Algorithm)
+    while (!isEmpty()) {
+        int curr = dequeue();
+        result[count++] = curr;
+
+        struct Node* temp = adj[curr];
+        while (temp != NULL) {
+            int next = temp->vertex;
+            indegree[next]--;
+
+            if (indegree[next] == 0) {
+                enqueue(next);
+            }
+            temp = temp->next;
+        }
+    }
+
+    // If cycle exists
+    if (count != numCourses) {
+        printf("[]");
+    } else {
+        for (int i = 0; i < count; i++) {
+            printf("%d ", result[i]);
+        }
+    }
+
+    return 0;
+}
