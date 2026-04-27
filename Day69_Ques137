@@ -1,0 +1,169 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX 100
+
+// Structure for adjacency list
+struct Node {
+    int vertex;
+    int weight;
+    struct Node* next;
+};
+
+// Graph representation
+struct Node* adj[MAX];
+
+// Function to create a new node
+struct Node* createNode(int v, int w) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->vertex = v;
+    newNode->weight = w;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Add edge (undirected graph)
+void addEdge(int u, int v, int w) {
+    struct Node* newNode = createNode(v, w);
+    newNode->next = adj[u];
+    adj[u] = newNode;
+
+    newNode = createNode(u, w);
+    newNode->next = adj[v];
+    adj[v] = newNode;
+}
+
+// Min Heap structure
+struct MinHeap {
+    int size;
+    int vertex[MAX];
+    int dist[MAX];
+};
+
+// Initialize heap
+void initHeap(struct MinHeap* h) {
+    h->size = 0;
+}
+
+// Swap function
+void swap(struct MinHeap* h, int i, int j) {
+    int tempV = h->vertex[i];
+    int tempD = h->dist[i];
+
+    h->vertex[i] = h->vertex[j];
+    h->dist[i] = h->dist[j];
+
+    h->vertex[j] = tempV;
+    h->dist[j] = tempD;
+}
+
+// Heapify up
+void heapifyUp(struct MinHeap* h, int index) {
+    while (index > 0 && h->dist[(index - 1) / 2] > h->dist[index]) {
+        swap(h, index, (index - 1) / 2);
+        index = (index - 1) / 2;
+    }
+}
+
+// Heapify down
+void heapifyDown(struct MinHeap* h, int index) {
+    int smallest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+
+    if (left < h->size && h->dist[left] < h->dist[smallest])
+        smallest = left;
+
+    if (right < h->size && h->dist[right] < h->dist[smallest])
+        smallest = right;
+
+    if (smallest != index) {
+        swap(h, index, smallest);
+        heapifyDown(h, smallest);
+    }
+}
+
+// Insert into heap
+void push(struct MinHeap* h, int v, int d) {
+    int i = h->size++;
+    h->vertex[i] = v;
+    h->dist[i] = d;
+    heapifyUp(h, i);
+}
+
+// Extract min
+int extractMin(struct MinHeap* h, int* d) {
+    int v = h->vertex[0];
+    *d = h->dist[0];
+
+    h->vertex[0] = h->vertex[h->size - 1];
+    h->dist[0] = h->dist[h->size - 1];
+    h->size--;
+
+    heapifyDown(h, 0);
+    return v;
+}
+
+// Dijkstra function
+void dijkstra(int V, int source) {
+    int dist[MAX];
+    for (int i = 0; i < V; i++)
+        dist[i] = INT_MAX;
+
+    dist[source] = 0;
+
+    struct MinHeap heap;
+    initHeap(&heap);
+
+    push(&heap, source, 0);
+
+    while (heap.size > 0) {
+        int u, d;
+        u = extractMin(&heap, &d);
+
+        if (d > dist[u])
+            continue;
+
+        struct Node* temp = adj[u];
+        while (temp != NULL) {
+            int v = temp->vertex;
+            int weight = temp->weight;
+
+            if (dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+                push(&heap, v, dist[v]);
+            }
+            temp = temp->next;
+        }
+    }
+
+    // Print result
+    printf("Vertex\tDistance from Source\n");
+    for (int i = 0; i < V; i++) {
+        printf("%d\t%d\n", i, dist[i]);
+    }
+}
+
+// Driver code
+int main() {
+    int V = 5;
+
+    for (int i = 0; i < V; i++)
+        adj[i] = NULL;
+
+    addEdge(0, 1, 10);
+    addEdge(0, 4, 5);
+    addEdge(1, 2, 1);
+    addEdge(1, 4, 2);
+    addEdge(2, 3, 4);
+    addEdge(3, 0, 7);
+    addEdge(3, 2, 6);
+    addEdge(4, 1, 3);
+    addEdge(4, 2, 9);
+    addEdge(4, 3, 2);
+
+    dijkstra(V, 0);
+
+    return 0;
+}
