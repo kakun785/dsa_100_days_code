@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX 1000
+
+// Function to calculate Manhattan distance
+int manhattan(int x1, int y1, int x2, int y2) {
+    return abs(x1 - x2) + abs(y1 - y2);
+}
+
+int minCostConnectPoints(int points[][2], int n) {
+    int visited[MAX] = {0};
+    int minDist[MAX];
+
+    // Initialize distances
+    for (int i = 0; i < n; i++)
+        minDist[i] = INT_MAX;
+
+    minDist[0] = 0; // start from point 0
+    int totalCost = 0;
+
+    for (int i = 0; i < n; i++) {
+        int u = -1;
+
+        // Pick minimum distance unvisited node
+        for (int j = 0; j < n; j++) {
+            if (!visited[j] && (u == -1 || minDist[j] < minDist[u])) {
+                u = j;
+            }
+        }
+
+        visited[u] = 1;
+        totalCost += minDist[u];
+
+        // Update distances
+        for (int v = 0; v < n; v++) {
+            if (!visited[v]) {
+                int dist = manhattan(points[u][0], points[u][1],
+                                     points[v][0], points[v][1]);
+
+                if (dist < minDist[v]) {
+                    minDist[v] = dist;
+                }
+            }
+        }
+    }
+
+    return totalCost;
+}
+
+// Driver
+int main() {
+    int points[][2] = {
+        {0,0},{2,2},{3,10},{5,2},{7,0}
+    };
+
+    int n = 5;
+
+    int result = minCostConnectPoints(points, n);
+    printf("Minimum Cost: %d\n", result);
+
+    return 0;
+}
