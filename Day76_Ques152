@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+// Node structure
+struct Node {
+    int val;
+    int size; // number of neighbors
+    struct Node* neighbors[MAX];
+};
+
+// Map: original node index → cloned node
+struct Node* visited[MAX];
+
+// Create new node
+struct Node* createNode(int val) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->val = val;
+    node->size = 0;
+    return node;
+}
+
+// DFS clone
+struct Node* cloneGraph(struct Node* node) {
+    if (node == NULL)
+        return NULL;
+
+    // If already cloned
+    if (visited[node->val] != NULL)
+        return visited[node->val];
+
+    // Create clone
+    struct Node* clone = createNode(node->val);
+    visited[node->val] = clone;
+
+    // Clone neighbors
+    for (int i = 0; i < node->size; i++) {
+        clone->neighbors[clone->size++] =
+            cloneGraph(node->neighbors[i]);
+    }
+
+    return clone;
+}
+
+int main() {
+    // NOTE: Full dynamic graph input is complex in C
+    // This is core logic for cloning
+
+    printf("Graph cloning logic implemented.\n");
+
+    return 0;
+}
