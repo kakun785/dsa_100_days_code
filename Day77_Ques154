@@ -1,0 +1,67 @@
+#include <stdio.h>
+
+#define MAX 100005
+
+int graph[MAX][100];  // adjacency list (simplified)
+int size[MAX];        // number of neighbors
+
+int disc[MAX], low[MAX], visited[MAX];
+int time = 0;
+
+void dfs(int u, int parent) {
+    visited[u] = 1;
+    disc[u] = low[u] = ++time;
+
+    for (int i = 0; i < size[u]; i++) {
+        int v = graph[u][i];
+
+        if (v == parent) continue;
+
+        if (!visited[v]) {
+            dfs(v, u);
+
+            // update low
+            if (low[v] < low[u])
+                low[u] = low[v];
+
+            // check bridge
+            if (low[v] > disc[u]) {
+                printf("[%d, %d]\n", u, v);
+            }
+        }
+        else {
+            // back edge
+            if (disc[v] < low[u])
+                low[u] = disc[v];
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    scanf("%d %d", &n, &m);
+
+    // init
+    for (int i = 0; i < n; i++) {
+        size[i] = 0;
+        visited[i] = 0;
+    }
+
+    // input edges
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        scanf("%d %d", &u, &v);
+
+        graph[u][size[u]++] = v;
+        graph[v][size[v]++] = u;
+    }
+
+    // run DFS
+    for (int i = 0; i < n; i++) {
+        if (!visited[i]) {
+            dfs(i, -1);
+        }
+    }
+
+    return 0;
+}
