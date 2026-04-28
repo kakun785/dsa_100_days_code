@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100000
+
+int graph[MAX][100], rev[MAX][100];
+int size[MAX], revSize[MAX];
+int visited[MAX];
+int stack[MAX], top = -1;
+
+// Step 1: DFS and push to stack
+void dfs1(int u) {
+    visited[u] = 1;
+
+    for (int i = 0; i < size[u]; i++) {
+        int v = graph[u][i];
+        if (!visited[v]) {
+            dfs1(v);
+        }
+    }
+
+    stack[++top] = u;
+}
+
+// Step 3: DFS on reversed graph
+void dfs2(int u) {
+    visited[u] = 1;
+
+    for (int i = 0; i < revSize[u]; i++) {
+        int v = rev[u][i];
+        if (!visited[v]) {
+            dfs2(v);
+        }
+    }
+}
+
+int main() {
+    int V, E;
+    scanf("%d %d", &V, &E);
+
+    // initialize
+    for (int i = 0; i < V; i++) {
+        size[i] = revSize[i] = 0;
+        visited[i] = 0;
+    }
+
+    // input edges
+    for (int i = 0; i < E; i++) {
+        int u, v;
+        scanf("%d %d", &u, &v);
+
+        graph[u][size[u]++] = v;
+        rev[v][revSize[v]++] = u; // reverse edge
+    }
+
+    // Step 1: fill stack
+    for (int i = 0; i < V; i++) {
+        if (!visited[i]) {
+            dfs1(i);
+        }
+    }
+
+    // Step 2: reset visited
+    for (int i = 0; i < V; i++) {
+        visited[i] = 0;
+    }
+
+    // Step 3: count SCCs
+    int sccCount = 0;
+
+    while (top >= 0) {
+        int node = stack[top--];
+
+        if (!visited[node]) {
+            dfs2(node);
+            sccCount++;
+        }
+    }
+
+    printf("%d\n", sccCount);
+
+    return 0;
+}
