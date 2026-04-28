@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+int findPeakElement(int nums[], int n) {
+    int low = 0, high = n - 1;
+
+    while (low < high) {
+        int mid = (low + high) / 2;
+
+        if (nums[mid] < nums[mid + 1]) {
+            // Peak is on right side
+            low = mid + 1;
+        } else {
+            // Peak is on left side or mid itself
+            high = mid;
+        }
+    }
+
+    return low; // or high (both same)
+}
+
+int main() {
+    int nums[] = {1, 2, 3, 1};
+    int n = sizeof(nums) / sizeof(nums[0]);
+
+    int peakIndex = findPeakElement(nums, n);
+
+    printf("Peak element index: %d\n", peakIndex);
+    printf("Peak element value: %d\n", nums[peakIndex]);
+
+    return 0;
+}
