@@ -1,0 +1,67 @@
+#include <stdio.h>
+
+#define MAX 105
+#define INF 1000000000
+
+int main() {
+    int n, m, threshold;
+    scanf("%d %d %d", &n, &m, &threshold);
+
+    int dist[MAX][MAX];
+
+    // Initialize
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (i == j)
+                dist[i][j] = 0;
+            else
+                dist[i][j] = INF;
+        }
+    }
+
+    // Input edges
+    for (int i = 0; i < m; i++) {
+        int u, v, w;
+        scanf("%d %d %d", &u, &v, &w);
+        dist[u][v] = w;
+        dist[v][u] = w;
+    }
+
+    // Floyd-Warshall
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (dist[i][k] < INF && dist[k][j] < INF) {
+                    if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                        dist[i][j] = dist[i][k] + dist[k][j];
+                    }
+                }
+            }
+        }
+    }
+
+    int resultCity = -1;
+    int minCount = INF;
+
+    // Count reachable cities
+    for (int i = 0; i < n; i++) {
+        int count = 0;
+
+        for (int j = 0; j < n; j++) {
+            if (i != j && dist[i][j] <= threshold) {
+                count++;
+            }
+        }
+
+        // Choose city with smallest count
+        // If tie → larger index
+        if (count <= minCount) {
+            minCount = count;
+            resultCity = i;
+        }
+    }
+
+    printf("%d\n", resultCity);
+
+    return 0;
+}
