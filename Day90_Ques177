@@ -1,0 +1,42 @@
+def can_paint(boards, n, k, max_time):
+    painters = 1
+    current_sum = 0
+
+    for i in range(n):
+        if boards[i] > max_time:
+            return False
+
+        if current_sum + boards[i] > max_time:
+            painters += 1
+            current_sum = boards[i]
+
+            if painters > k:
+                return False
+        else:
+            current_sum += boards[i]
+
+    return True
+
+
+def min_time_to_paint(boards, n, k):
+    low = max(boards)
+    high = sum(boards)
+    answer = high
+
+    while low <= high:
+        mid = (low + high) // 2
+
+        if can_paint(boards, n, k, mid):
+            answer = mid
+            high = mid - 1  # try better (smaller)
+        else:
+            low = mid + 1  # need more time
+
+    return answer
+
+
+# Example
+n, k = 4, 2
+boards = [10, 20, 30, 40]
+
+print(min_time_to_paint(boards, n, k))  # Output: 60
