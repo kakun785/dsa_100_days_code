@@ -1,0 +1,45 @@
+def is_possible(pages, n, m, max_pages):
+    students = 1
+    current_sum = 0
+
+    for i in range(n):
+        if pages[i] > max_pages:
+            return False
+
+        if current_sum + pages[i] > max_pages:
+            students += 1
+            current_sum = pages[i]
+
+            if students > m:
+                return False
+        else:
+            current_sum += pages[i]
+
+    return True
+
+
+def allocate_books(pages, n, m):
+    if m > n:
+        return -1  # not enough books
+
+    low = max(pages)
+    high = sum(pages)
+    answer = high
+
+    while low <= high:
+        mid = (low + high) // 2
+
+        if is_possible(pages, n, m, mid):
+            answer = mid
+            high = mid - 1
+        else:
+            low = mid + 1
+
+    return answer
+
+
+# Example
+n, m = 4, 2
+pages = [12, 34, 67, 90]
+
+print(allocate_books(pages, n, m))  # Output: 113
